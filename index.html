@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--
+       Licensed to the Apache Software Foundation (ASF) under one
+       or more contributor license agreements.  See the NOTICE file
+       distributed with this work for additional information
+       regarding copyright ownership.  The ASF licenses this file
+       to you under the Apache License, Version 2.0 (the
+       "License"); you may not use this file except in compliance
+       with the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+       Unless required by applicable law or agreed to in writing,
+       software distributed under the License is distributed on an
+       "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+       KIND, either express or implied.  See the License for the
+       specific language governing permissions and limitations
+       under the License.
+-->
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Hello World</title>
+           <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            //add listener when device ready
+            document.addEventListener("deviceready", onDeviceReady, false);
+            var db = window.openDatabase("Dummy_DB", "1.0", "Just a Dummy DB", 200000); //will create database Dummy_DB or open it
+
+            //function will be called when device ready
+            function onDeviceReady() {
+                db.transaction(populateDB, errorCB, successCB);
+            }
+
+            //create table and insert some record
+            function populateDB(tx) {
+                tx.executeSql('CREATE TABLE IF NOT EXISTS SoccerPlayer (id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, Club TEXT NOT NULL)');
+                tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("'+device.uuid+'", "'+device.model+'")');
+                tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("thanh64bits@gmail.com", "Arsenal")');
+            }
+
+            //function will be called when an error occurred
+            function errorCB(err) {
+                alert("Error processing SQL: " + err.code);
+            }
+
+            //function will be called when process succeed
+            function successCB() {
+                alert("success!");
+                db.transaction(queryDB, errorCB);
+            }
+
+            //select all from SoccerPlayer
+            function queryDB(tx) {
+                tx.executeSql('SELECT * FROM SoccerPlayer', [], querySuccess, errorCB);
+            }
+
+            function querySuccess(tx, result) {
+                $('#divtest').empty();
+                $.each(result.rows, function (index) {
+                    var row = result.rows.item(index);
+                    $('#divtest').append('<li><a href="#"><h3 class="ui-li-heading">' + row['Name'] + '</h3><p class="ui-li-desc">Club ' + row['Club'] + '</p></a></li>');
+                });
+
+                $('#divtest').listview();
+            }
+        </script>
+    </head>
+    <body>
+      
+            <h1>test</h1>
+        
+        <div id="divtest"></div>
+    </body>
+</html>
