@@ -17,7 +17,6 @@
        specific language governing permissions and limitations
        under the License.
 -->
-
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -25,56 +24,54 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>Hello World</title>
-           <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
-        <script type="text/javascript">
-            //add listener when device ready
-            document.addEventListener("deviceready", onDeviceReady, false);
-            var db = window.openDatabase("Dummy_DB", "1.0", "Just a Dummy DB", 200000); //will create database Dummy_DB or open it
-
-            //function will be called when device ready
-            function onDeviceReady() {
-                db.transaction(populateDB, errorCB, successCB);
-            }
-
-            //create table and insert some record
-            function populateDB(tx) {
-                tx.executeSql('CREATE TABLE IF NOT EXISTS SoccerPlayer (id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, Club TEXT NOT NULL)');
-                tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("'+device.uuid+'", "'+device.model+'")');
-                tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("thanh64bits@gmail.com", "Arsenal")');
-            }
-
-            //function will be called when an error occurred
-            function errorCB(err) {
-                alert("Error processing SQL: " + err.code);
-            }
-
-            //function will be called when process succeed
-            function successCB() {
-                alert("success!");
-                db.transaction(queryDB, errorCB);
-            }
-
-            //select all from SoccerPlayer
-            function queryDB(tx) {
-                tx.executeSql('SELECT * FROM SoccerPlayer', [], querySuccess, errorCB);
-            }
-
-            function querySuccess(tx, result) {
-                $('#divtest').empty();
-                $.each(result.rows, function (index) {
-                    var row = result.rows.item(index);
-                    $('#divtest').append('<li><a href="#"><h3 class="ui-li-heading">' + row['Name'] + '</h3><p class="ui-li-desc">Club ' + row['Club'] + '</p></a></li>');
-                });
-
-                $('#divtest').listview();
-            }
-        </script>
+       <script type="text/javascript">
+           document.addEventListener("deviceready", onDeviceReady, false);
+           var UUID;
+           UUID = device.uuid;
+           var db = openDatabase('db.sqlite', '1.0', 'Test DB', 2 * 1024 * 1024);
+           var msg;
+           function onDeviceReady() {
+               db.transaction(taodb,loi,thanhcong);
+                  
+           }
+          //
+          function taodb(){
+           tx.executeSql('CREATE TABLE IF NOT EXISTS vocabList(id unique, word, definition, weekNO)');
+                   tx.executeSql('INSERT INTO vocabList (id, '+UUID+', definition, weekNO) VALUES (1, "foobar", "foobar definition", 1)');
+          }
+          //
+          function loi(err) {
+              alert("Error processing SQL: " + err.code);
+          }
+          //
+          
+          function thanhcong() {
+              alert("success!");
+              
+              db.transaction(truyvan, loi);
+          }
+          //
+          function truyvan(tx) {
+              tx.executeSql('SELECT * FROM vocabList WHERE weekNO = 1', [].truycanthanhcong, loi);
+          }
+          //
+          function truyvanthanhcong(tx, result) {
+              var msg;
+              var len = results.rows.length, i;
+              for (i = 0; i < len; i++) {
+                  msg = "<p><b>" + results.rows.item(i).word + "</b></p>";
+                  var div = document.getElementById("content");
+                  div.innerHTML = msg;
+              }
+          }
+       </script>
     </head>
     <body>
-      
-            <h1>test</h1>
+        <div class="app">
+          <div id="content"></div>
+        </div>
         
-        <div id="divtest"></div>
     </body>
 </html>
