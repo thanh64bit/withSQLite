@@ -17,7 +17,14 @@
         function onDeviceReady() {
             var element = document.getElementById('deviceProperties');
             element.innerHTML = 'Device UUID: ' + device.uuid + '<br />';
-           
+           db.transaction(function (tx) {
+                tx.executeSql('CREATE TABLE IF NOT EXISTS vocabList(id unique, word, definition, weekNO)');
+                tx.executeSql('INSERT INTO vocabList (id, word, definition, weekNO) VALUES (1, "foobar", "foobar definition", 1)');
+                tx.executeSql('INSERT INTO vocabList (id, word, definition, weekNO) VALUES (2, "fooword", "fooword definition", 2)');
+                msg = '<p>Log message created and row inserted.</p>';
+                var div1 = document.getElementById('status');
+                div1.innerHTML = msg;
+            });
         }
 
     </script>
