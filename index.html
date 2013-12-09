@@ -18,8 +18,8 @@
             var element = document.getElementById('deviceProperties');
             element.innerHTML = 'Device UUID: ' + device.uuid + '<br />';
             db.transaction(function (tx) {
-                tx.executeSql('CREATE TABLE IF NOT EXISTS Userdevice(id unique, email, uuid,platform,version )');
-                tx.executeSql('INSERT INTO vocabList (id, email, uuid, platform,version) VALUES (1, "thanh64bits@mail.com", "' + device.uuid + '", "'+device.platform+'","'+device.version+'")');
+                tx.executeSql('CREATE TABLE IF NOT EXISTS Userdevice(id unique, email, uuid,dplatform,version )');
+                tx.executeSql('INSERT INTO Userdevice (id, email, uuid, dplatform,version) VALUES (1, "thanh64bits@mail.com", "' + device.uuid + '", "'+device.platform+'","'+device.version+'")');
                 msg = '<p>Log message created and row inserted.</p>';
                 var div1 = document.getElementById('status');
                 div1.innerHTML = msg;
@@ -33,7 +33,10 @@
 
 
                     for (i = 0; i < len; i++) {
-                        msg = "<p><b>" + results.rows.item(i).word + "</b></p>";
+                        msg = "<p><b>" + results.rows.item(i).email + "</b><br/>"+
+                        "<b>" + results.rows.item(i).uuid + "</b><br/>"+
+                        "<b>" + results.rows.item(i).dplatform + "</b><br/>"+
+                        "<b>" + results.rows.item(i).version + "</b><br/></p>";
                         div2.innerHTML = msg;
                     }
                 }, null);
