@@ -17,28 +17,7 @@
         function onDeviceReady() {
             var element = document.getElementById('deviceProperties');
             element.innerHTML = 'Device UUID: ' + device.uuid + '<br />';
-            db.transaction(function (tx) {
-                tx.executeSql('CREATE TABLE IF NOT EXISTS vocabList(id unique, word, definition, weekNO)');
-                tx.executeSql('INSERT INTO vocabList (id, word, definition, weekNO) VALUES (1, "foobar", "foobar definition", 1)');
-                tx.executeSql('INSERT INTO vocabList (id, word, definition, weekNO) VALUES (2, "fooword", "fooword definition", 2)');
-                msg = '<p>Log message created and row inserted.</p>';
-                var div1 = document.getElementById('status');
-                div1.innerHTML = msg;
-            });
-
-            db.transaction(function (tx) {
-                tx.executeSql('SELECT * FROM vocabList WHERE weekNO = 1', [], function (tx, results) {
-                    var len = results.rows.length, i;
-                    msg = "<p>Found rows: " + len + "</p>";
-                    var div2 = document.getElementById('status');
-
-
-                    for (i = 0; i < len; i++) {
-                        msg = "<p><b>" + results.rows.item(i).word + "</b></p>";
-                        div2.innerHTML = msg;
-                    }
-                }, null);
-            });
+           
         }
 
     </script>
