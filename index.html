@@ -1,77 +1,48 @@
 <!DOCTYPE html>
-<!--
-       Licensed to the Apache Software Foundation (ASF) under one
-       or more contributor license agreements.  See the NOTICE file
-       distributed with this work for additional information
-       regarding copyright ownership.  The ASF licenses this file
-       to you under the Apache License, Version 2.0 (the
-       "License"); you may not use this file except in compliance
-       with the License.  You may obtain a copy of the License at
-
-         http://www.apache.org/licenses/LICENSE-2.0
-
-       Unless required by applicable law or agreed to in writing,
-       software distributed under the License is distributed on an
-       "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-       KIND, either express or implied.  See the License for the
-       specific language governing permissions and limitations
-       under the License.
--->
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-       <script type="text/javascript">
-           document.addEventListener("deviceready", onDeviceReady, false);
-           var UUID;
-           UUID = device.uuid;
-           var db = openDatabase('db.sqlite', '1.0', 'Test DB', 2 * 1024 * 1024);
-           var msg;
-           function onDeviceReady() {
-               db.transaction(taodb,loi,thanhcong);
-                  
-           }
-          //
-          function taodb(){
-           tx.executeSql('CREATE TABLE IF NOT EXISTS vocabList(id unique, word, definition, weekNO)');
-                   tx.executeSql('INSERT INTO vocabList (id, '+UUID+', definition, weekNO) VALUES (1, "foobar", "foobar definition", 1)');
-          }
-          //
-          function loi(err) {
-              alert("Error processing SQL: " + err.code);
-          }
-          //
-          
-          function thanhcong() {
-              alert("success!");
-              
-              db.transaction(truyvan, loi);
-          }
-          //
-          function truyvan(tx) {
-              tx.executeSql('SELECT * FROM vocabList WHERE weekNO = 1', [].truycanthanhcong, loi);
-          }
-          //
-          function truyvanthanhcong(tx, result) {
-              var msg;
-              var len = results.rows.length, i;
-              for (i = 0; i < len; i++) {
-                  msg = "<p><b>" + results.rows.item(i).word + "</b></p>";
-                  var div = document.getElementById("content");
-                  div.innerHTML = msg;
-              }
-          }
-       </script>
-    </head>
-    <body>
-        <div class="app">
-          <div id="content"></div>
-        </div>
-        
-    </body>
+  <head>
+    <title>Device Properties Example</title>
+
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        // Wait for device API libraries to load
+        //
+        document.addEventListener("deviceready", onDeviceReady, false);
+        var db = openDatabase('db.sqlite', '1.0', 'Test DB', 2 * 1024 * 1024);
+        var msg;
+
+        // device APIs are available
+        //
+        function onDeviceReady() {
+            var element = document.getElementById('deviceProperties');
+            element.innerHTML = 'Device UUID: ' + device.uuid + '<br />';
+            db.transaction(function (tx) {
+                tx.executeSql('CREATE TABLE IF NOT EXISTS vocabList(id unique, word, definition, weekNO)');
+                tx.executeSql('INSERT INTO vocabList (id, word, definition, weekNO) VALUES (1, "foobar", "foobar definition", 1)');
+                tx.executeSql('INSERT INTO vocabList (id, word, definition, weekNO) VALUES (2, "fooword", "fooword definition", 2)');
+                msg = '<p>Log message created and row inserted.</p>';
+                document.querySelector('#status').innerHTML = msg;
+            });
+
+            db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM vocabList WHERE weekNO = 1', [], function (tx, results) {
+                    var len = results.rows.length, i;
+                    msg = "<p>Found rows: " + len + "</p>";
+                    document.querySelector('#status').innerHTML += msg;
+
+                    for (i = 0; i < len; i++) {
+                        msg = "<p><b>" + results.rows.item(i).word + "</b></p>";
+                        document.querySelector('#status').innerHTML += msg;
+                    }
+                }, null);
+            });
+        }
+
+    </script>
+  </head>
+  <body>
+    <h1 id="deviceProperties">Loading device properties...</h1>
+    <div id="status" name="status">Status Message</div>
+  </body>
 </html>
