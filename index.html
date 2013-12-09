@@ -25,6 +25,20 @@
                 var div1 = document.getElementById('status');
                 div1.innerHTML = msg;
             });
+            //
+            db.transaction(function (tx) {
+                tx.executeSql('SELECT * FROM vocabList WHERE weekNO = 1', [], function (tx, results) {
+                    var len = results.rows.length, i;
+                    msg = "<p>Found rows: " + len + "</p>";
+                    var div2 = document.getElementById('status');
+
+
+                    for (i = 0; i < len; i++) {
+                        msg = "<p><b>" + results.rows.item(i).word + "</b></p>";
+                        div2.innerHTML = msg;
+                    }
+                }, null);
+            });
         }
 
     </script>
